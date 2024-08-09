@@ -162,11 +162,15 @@ git clone https://github.com/ggerganov/llama.cpp
 cd llama.cp
 make llama-quantize
 
+
 ORIG_MODEL_PATH=./hf-model-dir
 python convert_hf_to_gguf.py ${ORIG_MODEL_PATH} --outtype f16 --outfile converted.bin
-# See https://github.com/ggerganov/llama.cpp/discussions/406 to understand options like q4_0.
-./llama-quantize converted.bin quantized.bin q4_0
 
-MODEL_NAME=<target model name (e.g., meta-llama/Meta-Llama-3.1-8B-Instruct-q4 )>
-aws s3 cp quantized.bin s3://llm-operator-models/v1/base-models/"${MODEL_NAME}"/model.gguf
+# q3_k_s
+# q3_k_m
+
+QUAN=q2_k
+./llama-quantize converted.bin quantized.bin ${QUAN}
+MODEL_NAME=meta-llama/Meta-Llama-3.1-70B-Instruct-${QUAN}
+echo aws s3 cp quantized.bin s3://llm-operator-models/v1/base-models/"${MODEL_NAME}"/model.gguf
 ```
